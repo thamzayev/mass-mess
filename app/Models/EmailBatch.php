@@ -12,10 +12,11 @@ class EmailBatch extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'smtp_configuration_id', 'csv_file_path',
-        'email_title_template', 'email_body_template', 'attachment_paths',
-        'has_personalized_attachments', 'data_headers', 'data_rows',
-        'status', 'total_recipients', 'sent_count', 'failed_count', 'tracking_enabled',
+        'user_id', 'name', 'smtp_configuration_id', 'csv_file_path',
+        'email_to', 'email_cc', 'email_bcc',
+        'email_subject', 'email_body', 'attachment_paths',
+        'has_personalized_attachments', 'data_headers', 'data_rows', 'status',
+        'status', 'total_recipients', 'generated_count', 'sent_count', 'failed_count', 'tracking_enabled',
     ];
 
     protected $casts = [
@@ -45,5 +46,10 @@ class EmailBatch extends Model
     public function trackingEvents(): HasMany
     {
         return $this->hasMany(EmailTrackingEvent::class);
+    }
+
+    public function emails(): HasMany
+    {
+        return $this->hasMany(Email::class);
     }
 }

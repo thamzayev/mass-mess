@@ -14,11 +14,11 @@ class CsvProcessingService
      * Reads the header row from a CSV file stored in Laravel Storage.
      *
      * @param string $filePath Path to the CSV file relative to the storage disk root.
-     * @param string $disk Storage disk name (default: 'local').
+     * @param string $disk Storage disk name (default: 'private').
      * @return array The header row as an array.
      * @throws \Exception If the file cannot be read or is invalid.
      */
-    public function getHeaders(string $filePath, string $disk = 'local'): array
+    public function getHeaders(string $filePath, string $disk = 'private'): array
     {
         try {
             if (!Storage::disk($disk)->exists($filePath)) {
@@ -53,11 +53,11 @@ class CsvProcessingService
      * Skips the header row.
      *
      * @param string $filePath Path to the CSV file relative to the storage disk root.
-     * @param string $disk Storage disk name (default: 'local').
+     * @param string $disk Storage disk name (default: 'private').
      * @return array An array of each data row as an associative array (header => value).
      * @throws \Exception If the file cannot be read or is invalid.
      */
-    public function getRecords(string $filePath, string $disk = 'local'): array
+    public function getRecords(string $filePath, string $disk = 'private'): array
     {
         try {
             $stream = Storage::disk($disk)->readStream($filePath);
@@ -87,11 +87,11 @@ class CsvProcessingService
      * Counts the total number of data rows (excluding the header) in a CSV file.
      *
      * @param string $filePath Path to the CSV file relative to the storage disk root.
-     * @param string $disk Storage disk name (default: 'local').
+     * @param string $disk Storage disk name (default: 'private').
      * @return int The number of data rows.
      * @throws \Exception If the file cannot be read or is invalid.
      */
-    public function getTotalRows(string $filePath, string $disk = 'local'): int
+    public function getTotalRows(string $filePath, string $disk = 'private'): int
     {
         try {
             $stream = Storage::disk($disk)->readStream($filePath);

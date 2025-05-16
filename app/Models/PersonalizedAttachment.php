@@ -11,7 +11,7 @@ class PersonalizedAttachment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'email_batch_id', 'recipient_identifier', 'file_path', 'original_name',
+        'email_batch_id', 'header', 'template', 'footer', 'filename',
     ];
 
     public function emailBatch(): BelongsTo

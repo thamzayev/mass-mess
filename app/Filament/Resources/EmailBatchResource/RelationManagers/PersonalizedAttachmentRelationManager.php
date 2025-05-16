@@ -25,9 +25,13 @@ class PersonalizedAttachmentsRelationManager extends RelationManager
             ->schema([
                 Forms\Components\TextInput::make('recipient_identifier')
                     ->readOnly(),
-                Forms\Components\TextInput::make('original_name')
+                Forms\Components\RichEditor::make('header')
                     ->readOnly(),
-                Forms\Components\TextInput::make('file_path')
+                Forms\Components\RichEditor::make('template')
+                    ->readOnly(),
+                Forms\Components\RichEditor::make('footer')
+                    ->readOnly(),
+                Forms\Components\TextInput::make('filename')
                     ->readOnly(),
                  Forms\Components\DateTimePicker::make('created_at')
                     ->readOnly(),
@@ -39,11 +43,9 @@ class PersonalizedAttachmentsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('recipient_identifier')
             ->columns([
-                Tables\Columns\TextColumn::make('recipient_identifier')
+                Tables\Columns\TextColumn::make('filename')
                      ->searchable()
                      ->sortable(),
-                Tables\Columns\TextColumn::make('original_name')
-                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
@@ -56,25 +58,6 @@ class PersonalizedAttachmentsRelationManager extends RelationManager
             ])
             ->actions([
                  Tables\Actions\ViewAction::make(),
-                 // Add download action
-                 Tables\Actions\Action::make('download')
-                    ->label('Download')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function ($record) {
-                        try {
-                            // Assuming 'private' disk where personalized attachments are stored
-                            return Storage::disk('private')->download($record->file_path, $record->original_name ?? basename($record->file_path));
-                        } catch (\Exception $e) {
-                            // Handle file not found or other storage errors
-                            \Filament\Notifications\Notification::make()
-                                ->title('Download Failed')
-                                ->body('The attachment file could not be found or downloaded.')
-                                ->danger()
-                                ->send();
-                            return null; // Prevent further action
-                        }
-                    }),
-                // Tables\Actions\DeleteAction::make(), // Maybe allow deleting individual attachments?
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

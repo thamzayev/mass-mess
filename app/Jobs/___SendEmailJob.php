@@ -168,9 +168,9 @@ class SendEmailJob implements ShouldQueue
                 }
 
                 // Attach Personalized File
-                if ($personalizedAttachmentPath && Storage::disk('local')->exists($personalizedAttachmentPath)) { // Check on correct disk
+                if ($personalizedAttachmentPath && Storage::disk('private')->exists($personalizedAttachmentPath)) { // Check on correct disk
                       $message->attachData(
-                          Storage::disk('local')->get($personalizedAttachmentPath),
+                          Storage::disk('private')->get($personalizedAttachmentPath),
                           $personalizedAttachmentName ?? 'personalized_attachment.pdf',
                           ['mime' => 'application/pdf']
                       );
@@ -200,8 +200,8 @@ class SendEmailJob implements ShouldQueue
         } finally {
              // --- 9. Cleanup ---
              // Remove temporary personalized PDF if stored locally and no longer needed
-             if ($personalizedAttachmentPath && Storage::disk('local')->exists($personalizedAttachmentPath)) {
-                // Storage::disk('local')->delete($personalizedAttachmentPath); // Uncomment if desired
+             if ($personalizedAttachmentPath && Storage::disk('private')->exists($personalizedAttachmentPath)) {
+                // Storage::disk('private')->delete($personalizedAttachmentPath); // Uncomment if desired
              }
              // Forget the dynamic mailer config to prevent memory leaks
              Config::forget("mail.mailers.{$mailerName}");

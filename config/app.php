@@ -65,7 +65,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Asia/Baku',
 
     /*
     |--------------------------------------------------------------------------
@@ -123,4 +123,5 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'email_tracking_enabled' => env('EMAIL_TRACKING_ENABLED', false),
 ];
