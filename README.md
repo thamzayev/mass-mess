@@ -1,66 +1,184 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# MassMess - A Mass Emailing Web Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A web application built with Laravel and Filament for sending personalized mass emails with custom attachments.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **CSV Data Import**: Upload CSV files containing recipient data and use them in your emails
+- **Dynamic Content**: Personalize emails using data columns from your CSV
+- **Conditional Content**: Include conditional sections in your emails based on column values
+- **Rich Text Editor**: Create professional-looking emails with a WYSIWYG editor
+- **Personalized Attachments**: Generate custom attachments for each recipient
+- **Static Attachments**: Include the same attachments for all recipients
+- **Custom SMTP Configuration**: Configure your own SMTP settings for sending emails
+- **Multiple Sender Addresses**: Send emails from different addresses
+- **Batch Processing**: Create batches to manage and track your email campaigns
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.1+
+- Laravel 10.x
+- Composer
+- Node.js & NPM
+- MySQL 5.7+ or PostgreSQL 9.6+
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+# Clone the repository
+git clone https://github.com/thamzayev/mass-mess.git
+cd mass-email-app
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+# Install PHP dependencies
+composer install
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# Install NPM dependencies
+npm install
 
-## Laravel Sponsors
+# Copy environment file
+cp .env.example .env
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+# Generate application key
+php artisan key:generate
 
-### Premium Partners
+# Configure your database in .env
+# DB_CONNECTION=mysql
+# DB_HOST=127.0.0.1
+# DB_PORT=3306
+# DB_DATABASE=mass_email_app
+# DB_USERNAME=root
+# DB_PASSWORD=
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+# Run migrations
+php artisan migrate
 
-## Contributing
+# Create Admin User
+php artisan make:filament-user
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+# Link public storage
+php artisan storage:link
 
-## Code of Conduct
+# Start the server
+php artisan serve
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Start background worker. Necessary to generate and send emails
+php artisan queue:work
 
-## Security Vulnerabilities
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Usage
+
+### Setting Up
+
+1. **Login to the admin panel** at `http://your-app-url/admin`
+2. **Configure SMTP Settings**: Add your SMTP connection details to send emails
+
+### Creating an Email Campaign
+
+1. **Create a Batch**: Go to the Batch section and create a new email batch
+2. **Upload CSV**: Navigate to the CSV Import section and upload your data file
+3. **Configure Recipients**: 
+   - Set "To" email addresses using a column from your CSV
+   - Optionally set "CC" and "BCC" recipients
+4. **Compose Email**: Use the rich text editor to compose your email content
+   - Use `[[column_name]]` to insert dynamic content from your CSV
+   - Use conditional statements for personalized content:
+     ```
+     [[IF column_name=='Yes']] 
+       This content will only appear if the column value is 'Yes'
+     [[ENDIF]]
+     ```
+   - Supported conditions: `==` (equals), `!=` (not equals)
+5. **Add Attachments**: 
+   - Static attachments: Upload files that will be sent to all recipients
+   - Dynamic attachments: Create templates with `[[column_name]]` placeholders (Header and footer will be added to each page of the file.)
+6. **Generate and Send**: Click on "Generate Emails" to create individual emails and send them
+
+### Example
+
+If your CSV contains columns like `name`, `email`, and `subscription_type`, you can create an email like:
+
+```
+Hello [[name]],
+
+Thank you for your interest in our services.
+
+[[IF subscription_type=='Premium']]
+As a premium subscriber, you have access to all of our features.
+Please find attached your premium resource pack.
+[[ENDIF]]
+
+[[IF subscription_type!='Premium']]
+Consider upgrading to our premium plan for additional benefits.
+[[ENDIF]]
+
+Best regards,
+Your Company
+```
+
+## Batch Management
+
+- **Create**: Set up a new email campaign
+- **Generate**: Process the batch to create individual emails
+- **Send**: Send all generated emails
+
+## Configuration
+
+### Environment Variables
+
+Configure the following in your `.env` file:
+
+```
+# Application Settings
+APP_NAME="Mass Mess"
+APP_ENV=production
+APP_DEBUG=false
+
+# Mail Queue Settings
+QUEUE_CONNECTION=database
+MAIL_QUEUE=emails
+
+# File Storage Settings
+FILESYSTEM_DISK=local
+```
+
+### Custom SMTP Settings
+
+Users can configure their own SMTP settings through the application interface, including:
+
+- SMTP Host
+- SMTP Port
+- SMTP Username
+- SMTP Password
+- Encryption Type (TLS/SSL)
+- From Email Address
+- From Name
+
+## Roadmap
+ - Email tracking
+ - Reporting
+ ...
+
+## Security
+
+- All user inputs are validated and sanitized
+- CSV data is processed securely
+- SMTP credentials are encrypted in the database
+- Rate limiting is implemented to prevent abuse
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Contributing
+
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
+
+## Support
+
+For support, please open an issue in the GitHub repository or contact the development team.

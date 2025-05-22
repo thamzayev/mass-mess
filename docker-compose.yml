@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  app:
+    user: 'www-data:www-data'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    networks:
+      - massmess
+    environment:
+      - QUEUE_CONNECTION=database
+    command: >
+        sh -c "./.docker/wait-for-it.sh db 3306 && php artisan migrate --force && php-fpm"
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./.docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - massmess
+
+  db:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: massmess
+      MYSQL_USER: massmess
+      MYSQL_PASSWORD: massmess
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - massmess
+
+  queue:
+    build:
+      context: .
+    command: >
+        sh -c "./.docker/wait-for-it.sh app 9000 && php artisan queue:work"
+    volumes:
+      - .:/var/www
+    depends_on:
+      - db
+      - app
+    networks:
+      - massmess
+
+volumes:
+  dbdata:
+
+networks:
+  massmess:

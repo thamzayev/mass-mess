@@ -26,7 +26,7 @@ return new class extends Migration
             $table->boolean('has_personalized_attachments')->default(false);
             $table->json('data_headers')->nullable();
             $table->json('data_rows')->nullable();
-            $table->enum('status', ['draft', 'generating', 'generated', 'sending', 'sent', 'failed'])->default('pending');
+            $table->enum('status', ['draft', 'generating', 'generated', 'sending', 'sent', 'failed'])->default('draft');
             $table->unsignedInteger('total_recipients')->default(0);
             $table->unsignedInteger('generated_count')->default(0);
             $table->unsignedInteger('sent_count')->default(0);
