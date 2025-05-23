@@ -10,6 +10,7 @@ use App\Models\EmailBatch;
 use App\Services\CsvProcessingService;
 use Filament\Forms;
 use App\Jobs\SendGeneratedEmailsJob;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -18,6 +19,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\HtmlString;
 
@@ -376,6 +378,48 @@ class EmailBatchResource extends Resource
                             Notification::make()->success()->title('Sending Started')->body('The email sending process has been initiated for batch ID: ' . $record->id)->send();
                         })
                         ->visible(fn (EmailBatch $record): bool => $record->status === 'generated'), // Only show if emails are generated
+
+                    Tables\Actions\Action::make('resetToDraft')
+                        ->label('Reset to Draft')
+                        ->icon('heroicon-o-arrow-path')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Reset Batch to Draft')
+                        ->modalDescription('Are you sure you want to reset this batch to draft? All generated emails for this batch will be permanently deleted, and its progress (generated, sent, failed counts) will be reset. This action cannot be undone.')
+                        ->action(function (EmailBatch $record) {
+                            try {
+                                DB::transaction(function () use ($record) {
+                                    // Delete associated emails - Assuming 'Emails' is the correct relationship name
+                                    $record->Emails()->delete();
+
+                                    // Update batch status and reset counts
+                                    $record->update([
+                                        'status' => 'draft',
+                                        'generated_count' => 0,
+                                        'sent_count' => 0,
+                                        'failed_count' => 0,
+                                    ]);
+                                });
+
+                                Notification::make()
+                                    ->title('Batch Reset Successfully')
+                                    ->body("Email Batch ID {$record->id} has been reset to draft. All associated emails have been deleted.")
+                                    ->success()
+                                    ->send();
+                            } catch (\Exception $e) {
+                                Log::error("Error resetting EmailBatch ID {$record->id} to draft: " . $e->getMessage(), ['exception' => $e]);
+                                Notification::make()->danger()->title('Reset Failed')->body('An unexpected error occurred: ' . $e->getMessage())->send();
+                            }
+                        })
+                        ->visible(fn (EmailBatch $record): bool => in_array($record->status, ['generating', 'generated', 'sending', 'failed'])),
+                        Tables\Actions\DeleteAction::make()
+                            ->requiresConfirmation()
+                            ->modalHeading('Delete Email Batch')
+                            ->modalDescription('Are you sure you want to delete this email batch? This action cannot be undone.')
+                            ->action(function (EmailBatch $record) {
+                                $record->delete();
+                                Notification::make()->success()->title('Batch Deleted')->body('The email batch has been deleted successfully.')->send();
+                            }),
                 ]),
             ])
             ->bulkActions([
@@ -391,7 +435,7 @@ class EmailBatchResource extends Resource
     {
         return [
             RelationManagers\EmailsRelationManager::class,
-            RelationManagers\EmailTrackingEventsRelationManager::class,
+            //RelationManagers\EmailTrackingEventsRelationManager::class,
         ];
     }
 
