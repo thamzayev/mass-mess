@@ -2,12 +2,10 @@
 
 namespace App\Services;
 
-use Barryvdh\DomPDF\Facade\Pdf as DomPdfFacade; // Use an alias to avoid conflicts if needed
-use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Log;
+
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Throwable; // Import Throwable for better error handling
+use Throwable;
 
 class PdfGeneratorService
 {

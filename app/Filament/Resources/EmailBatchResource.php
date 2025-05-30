@@ -10,7 +10,6 @@ use App\Models\EmailBatch;
 use App\Services\CsvProcessingService;
 use Filament\Forms;
 use App\Jobs\SendGeneratedEmailsJob;
-use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;

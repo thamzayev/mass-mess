@@ -65,7 +65,7 @@ class GenerateBatchEmailsJob implements ShouldQueue
                     $body = $templateService->embedTrackingPixel($body, $batch->id, $toAddress); // Embed tracking pixel
                 }
                 Log::info($body);
-                $currentAttachments = $staticAttachments;
+                $currentAttachments = [];
 
                 if ($this->batch->has_personalized_attachments && $personalizedAttachmentsConfig->isNotEmpty()) {
                     foreach ($personalizedAttachmentsConfig as $config) {
@@ -89,6 +89,9 @@ class GenerateBatchEmailsJob implements ShouldQueue
                         $currentAttachments[] = $pdfPath;
                     }
                 }
+
+                $currentAttachments = array_merge($currentAttachments, $staticAttachments);
+
 
                 Email::create([
                     'email_batch_id' => $batch->id,

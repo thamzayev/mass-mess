@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use AmidEsfahani\FilamentTinyEditor\TinyEditor; // <-- Add TinyEditor if editing body
 use App\Filament\Resources\EmailResource\Pages;
-use App\Filament\Resources\EmailResource\RelationManagers;
 use App\Models\Email;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,7 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth; // <-- Add Auth
 use Filament\Tables\Actions\Action; // <-- Add Action for custom actions
 // Add Job for sending single email if you create one
