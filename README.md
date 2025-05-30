@@ -55,6 +55,7 @@ php artisan migrate
 # Create Admin User
 php artisan make:filament-user
 
+<<<<<<< HEAD
 # Link public storage
 php artisan storage:link
 
@@ -68,6 +69,18 @@ php artisan queue:work
 
 ## Usage
 
+=======
+# Start the server
+php artisan serve
+
+# Start background worker. Necessary to generate and send emails
+php artisan queue:work
+
+```
+
+## Usage
+
+>>>>>>> cc80c1b64e780525443a772f64c459b560b4a616
 ### Setting Up
 
 1. **Login to the admin panel** at `http://your-app-url/admin`
